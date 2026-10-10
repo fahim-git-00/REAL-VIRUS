@@ -1,22 +1,56 @@
 plugins {
     id 'com.android.application'
+    id 'com.chaquo.python'
 }
 
 android {
-    namespace 'com.demo.ransom'
+    namespace 'com.real.virus'
     compileSdk 34
+    ndkVersion "25.2.9519653"
 
     defaultConfig {
-        applicationId "com.demo.ransom"
+        applicationId "com.real.virus"
         minSdk 24
         targetSdk 24
         versionCode 1
         versionName "1.0"
+
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a", "x86_64"
+        }
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++17 -O2"
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
+
+        python {
+            buildPython "python3"
+            pip {
+                install "requests"
+                install "cryptography"
+                install "pycryptodome"
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
+        }
     }
 
     buildTypes {
-        release { minifyEnabled false }
-        debug { debuggable true }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+        debug {
+            debuggable true
+        }
     }
 
     compileOptions {
@@ -27,4 +61,5 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 }
